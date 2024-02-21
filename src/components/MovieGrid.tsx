@@ -1,7 +1,8 @@
 'use client';
 
-import { getMovies } from '@/services/getMovies';
+import { getMovies } from '@/services/movies';
 import { useQuery } from '@tanstack/react-query';
+import { MovieCard } from './MovieCard';
 
 export const MovieGrid = () => {
   const moviesQuery = useQuery({
@@ -14,54 +15,19 @@ export const MovieGrid = () => {
 
   return (
     <div className="layout-container relative">
-      <div className="layout-container absolute w-full h-full top-0 left-0 bottom-0 right-0">
-        <div
-          style={{
-            height: '100%',
-            width: '100%',
-            transformOrigin: 'left bottom',
-            backgroundImage:
-              'linear-gradient(90deg, rgb(0, 0, 0) 1px, transparent 1px)',
-            backgroundSize: '33.31%',
-            marginLeft: '-1px',
-            opacity: 0.15,
-            transform: 'none',
-          }}
-        ></div>
-        <div className="layout-container top-0 bottom-0 left-0 right-0 w-full h-full absolute flex justify-between">
-          <div
-            style={{
-              width: '10px',
-              height: '100%',
-              marginLeft: '-5px',
-              background: 'white',
-            }}
-          ></div>
-          <div
-            style={{
-              width: '10px',
-              height: '100%',
-              marginRight: '-5px',
-              background: 'white',
-            }}
-          ></div>
-        </div>
+      <div className="grid z-10 relative grid-cols-2 md:grid-cols-3 gap-y-[84px] py-[84px] content-start">
+        {moviesQuery.data?.results.map((movie) => (
+          <MovieCard key={movie.id} movie={movie} />
+        ))}
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-y-[64px]">
-        {moviesQuery.data?.results.map((movie) => (
-          <div key={movie.id} className="max-w-[250px] p-4 mx-auto">
-            <img
-              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              alt={movie.title}
-              className="w-full object-cover rounded-md aspect-[2:3]"
-            />
-            <h2 className="mt-2 font-medium uppercase text-sm">
-              {movie.title}
-            </h2>
-            <p className="mt-1 text-sm text-gray-600">{movie.release_date}</p>
-          </div>
-        ))}
+      <div className="layout-container absolute top-0 left-0 bottom-0 right-0">
+        <div className="w-full h-full flex justify-between">
+          <div className="bg-black opacity-15 h-full w-[0px]"></div>
+          <div className="bg-black opacity-15 h-full w-[1px]"></div>
+          <div className="bg-black opacity-15 h-full w-[1px]"></div>
+          <div className="bg-black opacity-15 h-full w-[0px]"></div>
+        </div>
       </div>
     </div>
   );

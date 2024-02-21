@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactLenis from '@studio-freight/react-lenis';
+import { NextUIProvider } from '@nextui-org/react';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -40,7 +41,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <ReactLenis root>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <NextUIProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </NextUIProvider>
     </ReactLenis>
   );
 }

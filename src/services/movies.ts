@@ -9,3 +9,12 @@ export const getMovies = async (page: number, pageSize: number) => {
     },
   });
 };
+
+export const getMovieById = async (id: number) => {
+  return axiosInstance.get<Movie>(`/api/movies/${id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.API_KEY}`,
+    },
+  });
+};
