@@ -69,7 +69,10 @@ export const MovieModal = ({
                       </div>
                       <div className="flex flex-wrap gap-3">
                         {movie.genres.map((genre) => (
-                          <div className="border py-1 px-3 rounded-full">
+                          <div
+                            key={genre.id}
+                            className="border py-1 px-3 rounded-full"
+                          >
                             {genre.name}
                           </div>
                         ))}
@@ -96,6 +99,9 @@ export const MovieModal = ({
                           <div className="flex-1">
                             <CircularProgress
                               size="lg"
+                              aria-label={`User score: ${
+                                movie.vote_average * 10
+                              }%`}
                               value={movie.vote_average * 10}
                               color={
                                 movie.vote_average > 7 ? 'success' : 'warning'
