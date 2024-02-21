@@ -40,10 +40,11 @@ export const MovieModal = ({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       size="full"
+      backdrop="blur"
       classNames={{
         base: 'py-10 overflow-y-scroll',
-        body: 'py-10 px-0 lg:px-10 max-w-[800px] mx-auto',
-        closeButton: 'top-8 left-8 right-[unset]',
+        body: 'py-10 px-4 sm:px-10 max-w-[800px] mx-auto',
+        closeButton: 'top-8 left-2 sm:left-8 right-[unset]',
       }}
     >
       <ModalContent>
@@ -51,7 +52,7 @@ export const MovieModal = ({
           <>
             <ModalBody>
               {movieDetailsQuery.isLoading || !movie ? (
-                <CircularProgress aria-label="Loading..." />
+                <CircularProgress color="default" aria-label="Loading..." />
               ) : (
                 <>
                   <img
