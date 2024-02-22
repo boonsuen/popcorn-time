@@ -1,13 +1,4 @@
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from '@nextui-org/react';
-import Image from 'next/image';
+import { useDisclosure } from '@nextui-org/react';
 import { MovieModal } from './MovieModal';
 import clsx from 'clsx';
 
@@ -19,12 +10,12 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <>
+    <div className="p-4">
       <button
         key={movie.id}
         onClick={onOpen}
         className={clsx(
-          'max-w-[250px] text-left p-4 mx-auto flex flex-col',
+          'max-w-[250px] text-left mx-auto flex flex-col',
           'hover:opacity-60 transition-opacity duration-500 ease-in-out'
         )}
       >
@@ -41,6 +32,6 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
         onOpenChange={onOpenChange}
         movieId={movie.id}
       />
-    </>
+    </div>
   );
 };
