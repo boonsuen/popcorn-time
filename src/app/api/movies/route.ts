@@ -7,6 +7,8 @@ export async function GET(request: Request) {
   const pageSize = searchParams.get('pageSize');
   const sortBy = searchParams.get('sortBy');
   const genres = searchParams.get('genres');
+  const minRating = searchParams.get('minRating');
+  const maxRating = searchParams.get('maxRating');
 
   if (!page || !pageSize || !sortBy) {
     return new Response('Missing required parameters', {
@@ -42,7 +44,9 @@ export async function GET(request: Request) {
 
     const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&with_release_type=2|3&release_date.gte=${min_date}&release_date.lte=${max_date}&page=${
       tmdbPage + i
-    }&sort_by=${sortBy}${genres ? `&with_genres=${genres}` : ''}`;
+    }&sort_by=${sortBy}${genres ? `&with_genres=${genres}` : ''}${
+      minRating ? `&vote_average.gte=${minRating}` : ''
+    }${maxRating ? `&vote_average.lte=${maxRating}` : ''}`;
 
     const res = await fetch(url, {
       headers: {

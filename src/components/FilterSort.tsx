@@ -12,12 +12,13 @@ import {
   ModalHeader,
   Select,
   SelectItem,
+  Slider,
   useDisclosure,
 } from '@nextui-org/react';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 export const FilterSort = () => {
   const router = useRouter();
@@ -25,10 +26,12 @@ export const FilterSort = () => {
   const searchParams = useSearchParams();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { pagination, genres, setGenres } = useMovies();
+
+  const { pagination, genres, setGenres, rating, setRating } = useMovies();
 
   const [selectedSort, setSelectedSort] = useState<SortBy>(pagination.sortBy);
   const [selectedGenres, setSelectedGenres] = useState<number[]>(genres);
+  const [selectedRating, setSelectedRating] = useState(rating);
 
   const handleSortChange = (sortBy: SortBy) => {
     setSelectedSort(sortBy);
@@ -39,11 +42,15 @@ export const FilterSort = () => {
     setSelectedSort('popularity.desc');
     setSelectedGenres([]);
     setGenres([]);
+    setSelectedRating([0, 10]);
+    setRating([0, 10]);
 
     const params = new URLSearchParams(searchParams.toString());
     params.delete('sortBy');
     params.delete('genres');
     params.delete('page');
+    params.delete('minRating');
+    params.delete('maxRating');
 
     router.replace(`${pathname}?${params.toString()}`, {
       scroll: false,
@@ -63,6 +70,14 @@ export const FilterSort = () => {
       params.set('genres', selectedGenres.join(','));
     } else {
       params.delete('genres');
+    }
+
+    if (selectedRating[0] !== 0 || selectedRating[1] !== 10) {
+      params.set('minRating', selectedRating[0].toString());
+      params.set('maxRating', selectedRating[1].toString());
+    } else {
+      params.delete('minRating');
+      params.delete('maxRating');
     }
 
     // Reset page when filter changes
@@ -89,7 +104,31 @@ export const FilterSort = () => {
       >
         Filter / Sort
       </button>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} data-lenis-prevent>
+      <Modal
+        motionProps={{
+          variants: {
+            enter: {
+              y: 0,
+              opacity: 1,
+              transition: {
+                duration: 0.3,
+                ease: 'easeOut',
+              },
+            },
+            exit: {
+              y: 20,
+              opacity: 0,
+              transition: {
+                duration: 0.2,
+                ease: 'easeIn',
+              },
+            },
+          },
+        }}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        data-lenis-prevent
+      >
         <ModalContent>
           {(onClose) => (
             <>
@@ -123,7 +162,8 @@ export const FilterSort = () => {
                     ))}
                   </Select>
                 </div>
-                <div>
+
+                <div className="mb-4">
                   <h3 className="mb-2">Genres</h3>
                   <div className="flex flex-wrap gap-2">
                     {genreListQuery.data?.genres.map((genre) => (
@@ -151,6 +191,28 @@ export const FilterSort = () => {
                         {genre.name}
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <h3 className="mb-2">Rating</h3>
+                  <div>
+                    <Slider
+                      showTooltip
+                      showOutline
+                      color="foreground"
+                      startContent={<p className="text-sm">0</p>}
+                      endContent={<p className="text-sm">10</p>}
+                      aria-label="Rating"
+                      step={1}
+                      minValue={0}
+                      maxValue={10}
+                      value={selectedRating}
+                      onChange={(value) => {
+                        setSelectedRating(value as [number, number]);
+                      }}
+                      className="max-w-md"
+                    />
                   </div>
                 </div>
               </ModalBody>
