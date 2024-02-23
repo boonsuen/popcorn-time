@@ -13,15 +13,15 @@ import {
 export default async function Home() {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ['movies', { page: 1 }],
-    queryFn: () =>
-      getMovies({
-        page: 1,
-        pageSize: 20,
-        sortBy: 'popularity.desc',
-      }),
-  });
+  // await queryClient.prefetchQuery({
+  //   queryKey: ['genres'],
+  //   queryFn: () =>
+  //     // getMovies({
+  //     //   page: 1,
+  //     //   pageSize: 20,
+  //     //   sortBy: 'popularity.desc',
+  //     // }),
+  // });
 
   return (
     <main className="min-h-screen">

@@ -23,7 +23,15 @@ export const Pagination = () => {
   );
 
   const handlePageChange = (page: number) => {
-    router.push(pathname + '?' + createQueryString('page', page.toString()), {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (page === 1) {
+      params.delete('page');
+    } else {
+      params.set('page', page.toString());
+    }
+
+    router.replace(`${pathname}?${params.toString()}`, {
       scroll: false,
     });
   };

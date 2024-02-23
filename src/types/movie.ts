@@ -17,4 +17,6 @@ export interface Movie {
   revenue: number;
 }
 
-export interface MovieQuery extends PaginationParams {}
+export interface MovieQuery extends PaginationParams {
+  genres: string;
+}

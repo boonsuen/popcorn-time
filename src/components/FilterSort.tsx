@@ -1,6 +1,7 @@
 'use client';
 
 import { useMovies } from '@/context/MovieContext';
+import { getGenres } from '@/services/genres';
 import { SortBy, sortOptions } from '@/types/sort';
 import {
   Button,
@@ -13,6 +14,8 @@ import {
   SelectItem,
   useDisclosure,
 } from '@nextui-org/react';
+import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
@@ -22,35 +25,61 @@ export const FilterSort = () => {
   const searchParams = useSearchParams();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { pagination } = useMovies();
+  const { pagination, genres, setGenres } = useMovies();
 
   const [selectedSort, setSelectedSort] = useState<SortBy>(pagination.sortBy);
-
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams]
-  );
+  const [selectedGenres, setSelectedGenres] = useState<number[]>(genres);
 
   const handleSortChange = (sortBy: SortBy) => {
     setSelectedSort(sortBy);
   };
 
   const handleClear = () => {
-    router.push(pathname, {
+    // Clear all filters
+    setSelectedSort('popularity.desc');
+    setSelectedGenres([]);
+    setGenres([]);
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('sortBy');
+    params.delete('genres');
+    params.delete('page');
+
+    router.replace(`${pathname}?${params.toString()}`, {
       scroll: false,
     });
   };
 
   const handleSearch = () => {
-    router.push(pathname + '?' + createQueryString('sortBy', selectedSort), {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (selectedSort !== 'popularity.desc') {
+      params.set('sortBy', selectedSort);
+    } else {
+      params.delete('sortBy');
+    }
+
+    if (selectedGenres.length > 0) {
+      params.set('genres', selectedGenres.join(','));
+    } else {
+      params.delete('genres');
+    }
+
+    // Reset page when filter changes
+    params.delete('page');
+
+    router.replace(`${pathname}?${params.toString()}`, {
       scroll: false,
     });
   };
+
+  const genreListQuery = useQuery({
+    queryKey: ['genres'],
+    queryFn: async () => {
+      const res = await getGenres();
+      return res.data;
+    },
+  });
 
   return (
     <>
@@ -68,26 +97,62 @@ export const FilterSort = () => {
                 Filter / Sort
               </ModalHeader>
               <ModalBody>
-                <Select
-                  disallowEmptySelection
-                  variant="underlined"
-                  label="Sort By"
-                  className="w-full"
-                  selectedKeys={new Set([selectedSort])}
-                  onSelectionChange={(key) => {
-                    handleSortChange(Array.from(key)[0] as SortBy);
-                  }}
-                  listboxProps={{
-                    // @ts-ignore
-                    'data-lenis-prevent': 'true',
-                  }}
-                >
-                  {sortOptions.map((op) => (
-                    <SelectItem key={op.value} value={op.value}>
-                      {op.label}
-                    </SelectItem>
-                  ))}
-                </Select>
+                <div className="mt-4 mb-4">
+                  <h3>Sort By</h3>
+                  <Select
+                    disallowEmptySelection
+                    variant="underlined"
+                    aria-label="Sort by"
+                    classNames={{
+                      trigger: 'pt-0',
+                    }}
+                    className="w-full"
+                    selectedKeys={new Set([selectedSort])}
+                    onSelectionChange={(key) => {
+                      handleSortChange(Array.from(key)[0] as SortBy);
+                    }}
+                    listboxProps={{
+                      // @ts-ignore
+                      'data-lenis-prevent': 'true',
+                    }}
+                  >
+                    {sortOptions.map((op) => (
+                      <SelectItem key={op.value} value={op.value}>
+                        {op.label}
+                      </SelectItem>
+                    ))}
+                  </Select>
+                </div>
+                <div>
+                  <h3 className="mb-2">Genres</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {genreListQuery.data?.genres.map((genre) => (
+                      <button
+                        className={clsx(
+                          'text-black bg-white rounded-full text-sm px-3 py-1 border-solid border-black border',
+                          'transition-colors duration-200 ease-in-out',
+                          {
+                            '!bg-black text-white': selectedGenres.includes(
+                              genre.id
+                            ),
+                          }
+                        )}
+                        key={genre.id}
+                        onClick={() => {
+                          if (selectedGenres.includes(genre.id)) {
+                            setSelectedGenres((prev) =>
+                              prev.filter((id) => id !== genre.id)
+                            );
+                          } else {
+                            setSelectedGenres((prev) => [...prev, genre.id]);
+                          }
+                        }}
+                      >
+                        {genre.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </ModalBody>
               <ModalFooter className="flex justify-between gap-4 p-4 border-t">
                 <Button

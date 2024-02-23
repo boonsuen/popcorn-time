@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { PaginationState, UsePaginationParams } from '@/types/pagination';
 import { DEFAULT_SORT_BY, PAGE_SIZE } from '@/config/const';
 import { useSearchParams } from 'next/navigation';
-import { SORT_FIELDS, ALL_SORT_BY, SortBy } from '@/types/sort';
+import { ALL_SORT_BY, SortBy } from '@/types/sort';
 
 const usePagination = (init?: UsePaginationParams) => {
   const [enabled, setEnabled] = useState<boolean>(init?.enabled ?? true);
@@ -21,18 +21,6 @@ const usePagination = (init?: UsePaginationParams) => {
         : DEFAULT_SORT_BY,
     ...init,
   });
-
-  useEffect(() => {
-    setPagination((prev) => ({
-      ...prev,
-      page: paramPage ? parseInt(paramPage) : 1,
-      sortBy:
-        typeof paramSortBy === 'string' &&
-        ALL_SORT_BY.includes(paramSortBy as any)
-          ? (paramSortBy as SortBy)
-          : DEFAULT_SORT_BY,
-    }));
-  }, [paramPage, paramSortBy]);
 
   return [pagination, setPagination, enabled, setEnabled] as const;
 };
