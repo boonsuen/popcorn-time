@@ -1,9 +1,8 @@
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { getMovies } from '@/services/movies';
 import { PaginationResponse, PaginationState } from '@/types/pagination';
 import usePagination from '@/hooks/usePagination';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 type MoviesContextType = {
   moviesQuery: UseQueryResult<PaginationResponse<Movie>, Error>;
