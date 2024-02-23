@@ -9,14 +9,18 @@ import {
   QueryClient,
   dehydrate,
 } from '@tanstack/react-query';
-import { Suspense } from 'react';
 
 export default async function Home() {
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: ['movies', { page: 1 }],
-    queryFn: () => getMovies(1, 20),
+    queryFn: () =>
+      getMovies({
+        page: 1,
+        pageSize: 20,
+        sortBy: 'popularity.desc',
+      }),
   });
 
   return (
