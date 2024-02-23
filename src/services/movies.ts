@@ -1,16 +1,14 @@
 import { axiosInstance } from '@/config/service';
+import { Movie, MovieQuery } from '@/types/movie';
 import { PaginationResponse } from '@/types/pagination';
 
-export const getMovies = async (page: number, pageSize: number) => {
+export const getMovies = async (query: MovieQuery) => {
   return axiosInstance.get<PaginationResponse<Movie>>('/api/movies', {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${process.env.API_KEY}`,
     },
-    params: {
-      page,
-      pageSize,
-    },
+    params: query,
   });
 };
 

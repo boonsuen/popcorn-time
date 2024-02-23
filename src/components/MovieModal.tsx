@@ -55,11 +55,13 @@ export const MovieModal = ({
                 <CircularProgress color="default" aria-label="Loading..." />
               ) : (
                 <>
-                  <img
-                    src={`https://image.tmdb.org/t/p/original${movie?.backdrop_path}`}
-                    alt={movie?.title}
-                    className="w-full object-cover aspect-video"
-                  />
+                  {movie.backdrop_path && (
+                    <img
+                      src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+                      alt={movie.title}
+                      className="w-full object-cover aspect-video"
+                    />
+                  )}
                   <div>
                     <h1 className="text-4xl uppercase font-medium mt-4 mb-4">
                       {movie.title}

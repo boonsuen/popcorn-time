@@ -1,5 +1,7 @@
 'use client';
 
+import { useMovies } from '@/context/MovieContext';
+import { SortBy, sortOptions } from '@/types/sort';
 import {
   Button,
   Modal,
@@ -7,11 +9,48 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Select,
+  SelectItem,
   useDisclosure,
 } from '@nextui-org/react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback, useState } from 'react';
 
 export const FilterSort = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { pagination } = useMovies();
+
+  const [selectedSort, setSelectedSort] = useState<SortBy>(pagination.sortBy);
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  const handleSortChange = (sortBy: SortBy) => {
+    setSelectedSort(sortBy);
+  };
+
+  const handleClear = () => {
+    router.push(pathname, {
+      scroll: false,
+    });
+  };
+
+  const handleSearch = () => {
+    router.push(pathname + '?' + createQueryString('sortBy', selectedSort), {
+      scroll: false,
+    });
+  };
 
   return (
     <>
@@ -28,18 +67,45 @@ export const FilterSort = () => {
               <ModalHeader className="border-b font-medium flex flex-col gap-1">
                 Filter / Sort
               </ModalHeader>
-              <ModalBody></ModalBody>
+              <ModalBody>
+                <Select
+                  disallowEmptySelection
+                  variant="underlined"
+                  label="Sort By"
+                  className="w-full"
+                  selectedKeys={new Set([selectedSort])}
+                  onSelectionChange={(key) => {
+                    handleSortChange(Array.from(key)[0] as SortBy);
+                  }}
+                  listboxProps={{
+                    // @ts-ignore
+                    'data-lenis-prevent': 'true',
+                  }}
+                >
+                  {sortOptions.map((op) => (
+                    <SelectItem key={op.value} value={op.value}>
+                      {op.label}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </ModalBody>
               <ModalFooter className="flex justify-between gap-4 p-4 border-t">
                 <Button
                   className="rounded-full"
                   variant="light"
-                  onPress={onClose}
+                  onPress={() => {
+                    handleClear();
+                    onClose();
+                  }}
                 >
                   Clear All
                 </Button>
                 <Button
                   className="text-white bg-black rounded-full"
-                  onPress={onClose}
+                  onPress={() => {
+                    handleSearch();
+                    onClose();
+                  }}
                 >
                   Search
                 </Button>

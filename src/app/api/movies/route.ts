@@ -1,18 +1,27 @@
+import dayjs from 'dayjs';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
 
   const page = searchParams.get('page');
   const pageSize = searchParams.get('pageSize');
+  const sortBy = searchParams.get('sortBy');
 
-  if (!page || !pageSize) {
-    return new Response('Missing page or pageSize query parameter', {
+  if (!page || !pageSize || !sortBy) {
+    return new Response('Missing required parameters', {
       status: 400,
     });
   }
 
-  // TMDB API does not support custom page size, it always returns 20 items per page
+  // Calculate min_date and max_date
+  // max_date will be the next Wednesday from today
+  // min_date will be the date 6 weeks ago from max_date
+  // e.g. If todat is 23 Feb Friday, then max_date will be 28 Feb Tuesday and min_date will be 17 Jan Tuesday
+  const today = dayjs();
+  const max_date = today.day(3).add(1, 'week').format('YYYY-MM-DD');
+  const min_date = today.subtract(6, 'week').day(3).format('YYYY-MM-DD');
 
-  // For example, if page is 2 and pageSize is 30
+  // If page is 2 and pageSize is 30
   // Then, the startIndex will be 30 and endIndex will be 60
   // Thus, the tmdbPage to fetch will start from 2 and end at 3
   // (Fetch index 20 to 40 and 40 to 60 since we want 30 to 60)
@@ -31,9 +40,9 @@ export async function GET(request: Request) {
       break;
     }
 
-    const url = `https://api.themoviedb.org/3/discover/movie?with_release_type=2|3&release_date.gte={min_date}&release_date.lte={max_date}&page=${
+    const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&with_release_type=2|3&release_date.gte=${min_date}&release_date.lte=${max_date}&page=${
       tmdbPage + i
-    }`;
+    }&sort_by=${sortBy}`;
 
     const res = await fetch(url, {
       headers: {
@@ -43,7 +52,7 @@ export async function GET(request: Request) {
     });
     const result = await res.json();
 
-    if (!totalResults || !totalPages) {
+    if (!totalResults) {
       totalResults = result.total_results;
     }
 

@@ -3,6 +3,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { getMovies } from '@/services/movies';
 import { PaginationResponse, PaginationState } from '@/types/pagination';
 import usePagination from '@/hooks/usePagination';
+import { Movie } from '@/types/movie';
 
 type MoviesContextType = {
   moviesQuery: UseQueryResult<PaginationResponse<Movie>, Error>;
@@ -22,13 +23,18 @@ export const useMovies = () => {
 };
 
 export const MoviesProvider = ({ children }: { children: React.ReactNode }) => {
-  // const [selectedSort, setSelectedSort] = useState<Sorting>({});
   const [pagination, setPagination, enabled] = usePagination();
 
   const moviesQuery = useQuery({
     queryKey: ['movies', pagination],
     queryFn: async () => {
-      const res = await getMovies(pagination.page, pagination.pageSize);
+      const query = {
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+        sortBy: pagination.sortBy,
+      };
+
+      const res = await getMovies(query);
       return res.data;
     },
     enabled,
