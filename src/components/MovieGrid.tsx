@@ -2,7 +2,6 @@
 
 import { useMovies } from '@/context/MovieContext';
 import { MovieCard } from './MovieCard';
-import { Pagination } from '@nextui-org/react';
 
 export const MovieGrid = () => {
   const { moviesQuery } = useMovies();

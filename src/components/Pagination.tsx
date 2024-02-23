@@ -2,12 +2,30 @@
 
 import { useMovies } from '@/context/MovieContext';
 import { Pagination as NextUIPagination } from '@nextui-org/react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 
 export const Pagination = () => {
-  const { moviesQuery } = useMovies();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const { moviesQuery, pagination } = useMovies();
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
 
   const handlePageChange = (page: number) => {
-    // moviesQuery.refetch({ page });
+    router.push(pathname + '?' + createQueryString('page', page.toString()), {
+      scroll: false,
+    });
   };
 
   return (
@@ -26,8 +44,8 @@ export const Pagination = () => {
           }}
           disableCursorAnimation
           showControls
-          total={moviesQuery.data.total_results}
-          initialPage={1}
+          total={moviesQuery.data.total_pages}
+          initialPage={pagination.page}
           onChange={handlePageChange}
         />
       )}

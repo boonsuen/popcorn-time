@@ -1,18 +1,12 @@
-export enum SortOrder {
-  ASC = 'asc',
-  DESC = 'desc',
-}
+import { SORT_FIELDS, SortOrder } from './sort';
 
 export interface PaginationParams {
   page: number;
   pageSize: number;
-  sortField: string;
-  sortOrder: SortOrder;
+  sortBy: `${SORT_FIELDS}.${SortOrder}`;
 }
 
-export interface PaginationState extends PaginationParams {
-  total: number;
-}
+export interface PaginationState extends PaginationParams {}
 
 export interface PaginationResponse<T> {
   page: number;

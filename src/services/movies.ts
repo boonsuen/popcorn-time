@@ -7,6 +7,10 @@ export const getMovies = async (page: number, pageSize: number) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${process.env.API_KEY}`,
     },
+    params: {
+      page,
+      pageSize,
+    },
   });
 };
 

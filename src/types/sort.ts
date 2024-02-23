@@ -1,15 +1,19 @@
-export enum SORT_OPTIONS {
-  POPULARITY_DESC = 'popularity.desc',
-  POPULARITY_ASC = 'popularity.asc',
-  RATING_DESC = 'vote_average.desc',
-  RATING_ASC = 'vote_average.asc',
+export enum SortOrder {
+  ASC = 'asc',
+  DESC = 'desc',
 }
 
-type SortOptions = `${SORT_OPTIONS}`;
+export enum SORT_FIELDS {
+  POPULARITY = 'popularity',
+  VOTE_AVERAGE = 'vote_average',
+}
+
+type SortFields = `${SORT_FIELDS}`;
+type SortBy = `${SortFields}.${SortOrder}`;
 
 export const sortOptions: {
   label: string;
-  value: SortOptions;
+  value: SortBy;
 }[] = [
   {
     label: 'Popularity Descending',
