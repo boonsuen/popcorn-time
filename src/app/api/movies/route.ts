@@ -47,9 +47,6 @@ export async function GET(request: Request) {
       totalResults = result.total_results;
     }
 
-    console.log('result', result);
-    console.log('tmdbPage', tmdbPage + i);
-
     allResults.push(...result.results);
   }
 

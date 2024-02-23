@@ -41,9 +41,7 @@ export default async function Home() {
             <hr className="mx-auto border-t border-gray-800 opacity-15" />
             <div className="md:layout-container">
               <div className="w-full flex justify-center md:justify-end bg-white py-10 px-4 md:px-0">
-                <Suspense>
-                  <Pagination />
-                </Suspense>
+                <Pagination />
               </div>
             </div>
           </div>

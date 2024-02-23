@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ReactLenis from '@studio-freight/react-lenis';
 import { NextUIProvider } from '@nextui-org/react';
 import { MoviesProvider } from '@/context/MovieContext';
+import { Suspense } from 'react';
 
 function makeQueryClient() {
   return new QueryClient({
@@ -44,7 +45,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <ReactLenis root>
       <NextUIProvider>
         <QueryClientProvider client={queryClient}>
-          <MoviesProvider>{children}</MoviesProvider>
+          <Suspense>
+            <MoviesProvider>{children}</MoviesProvider>
+          </Suspense>
         </QueryClientProvider>
       </NextUIProvider>
     </ReactLenis>
