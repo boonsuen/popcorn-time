@@ -76,7 +76,7 @@ export const Header = () => {
               hidden: { opacity: 0 },
             }}
           >
-            BROWSE OUR SELECTION
+            BROWSE THE SELECTION
             <br />
             CHOOSE YOUR COMFORT
           </motion.p>
